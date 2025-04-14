@@ -1,18 +1,25 @@
 ## 树和二叉树
-
+​**​作者​**​：李昀卓
+​**​日期​**​：2025年4月14日
 ### 一些定义
 
 #### 基本术语
 1.结点的度：结点拥有的子树数。
+
 2.树的度：max结点度。
+
 3.层次：根的层次为1。
+
 4.深度：最大层次。
+
 5.有序树：树中结点的各子树有次序，从左至右，最左边子树的根称第一个孩子。
+
 6.森林：m棵互不相交的树的集合。
 > **说明**：就逻辑结构而言，任何一棵树都是一个二元组`Tree=(root,F)`,其中`root`是数据，`F`是包含m棵树的森林
 
 #### 二叉树(Binary Tree)
 1.可为空。
+
 2.子树有左右之分。
 
 ### 二叉树的操作
@@ -110,4 +117,47 @@ void createThreadBinaryTree(bithrnode *p) {
     }
 }
 ```
-###
+### 二叉树应用：计算表达式
+我们先实现二叉树计算波兰式：
+```cpp
+TreeNode* buildExpressionTree(vector<string>& tokens, int& index) {
+    if (index >= tokens.size()) return nullptr;
+    
+    string current = tokens[index++];
+    TreeNode* node = new TreeNode(current);
+    
+    // 如果是操作符，则递归构建左右子树
+    if (isOperator(current)) {
+        node->left = buildExpressionTree(tokens, index);
+        node->right = buildExpressionTree(tokens, index);
+    }
+    // 操作数作为叶子节点，无需处理子树
+    
+    return node;
+}
+```
+我们引入一中类似文件输入的处理字符串的方法：
+```cpp
+string input;
+getline(cin, input);
+    
+// 将输入拆分为tokens
+vector<string> tokens;
+stringstream ss(input);
+string token;
+while (ss >> token) {
+    tokens.push_back(token);
+}
+```
+由于波兰式就是方便读取计算的方便形式，对于构建好的表达式树，我们递归求解即可：
+```cpp
+int valueexptree(TreeNode *T) {
+    if (T == NULL) return 0;
+    if (T->left == NULL && T->right == NULL) return stoi(T->val); //stoi将字符串转换为整数
+    
+    int leftValue = valueexptree(T->left);
+    int rightValue = valueexptree(T->right);
+    
+    return getvalue(T->val, leftValue, rightValue);
+}
+```
